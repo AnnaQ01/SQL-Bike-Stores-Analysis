@@ -192,4 +192,84 @@ ORDER BY
 **Recommendations:**
 
 - Boost Repeat Buyers: Focus retention efforts in New York and Texas through loyalty programs and personalized offers.
-- Leverage California's Potential: Strengthen repeat buyer incentives in California to maximize high-value customer contributions
+- Leverage California's Potential: Strengthen repeat buyer incentives in California to maximize high-value customer contributions.
+
+# 2. Revenue analysis
+
+**2.1. YoY Growth**
+```
+SELECT 
+    YEAR(o.order_date) AS year,
+    SUM(oi.list_price * (1 - oi.discount) * oi.quantity) AS revenue,
+    LAG(SUM(oi.list_price * (1 - oi.discount) * oi.quantity)) OVER (ORDER BY YEAR(o.order_date)) AS prev_year_revenue,
+    ROUND(((SUM(oi.list_price * (1 - oi.discount) * oi.quantity) - LAG(SUM(oi.list_price * (1 - oi.discount) * oi.quantity)) OVER (ORDER BY YEAR(o.order_date))) / LAG(SUM(oi.list_price * (1 - oi.discount) * oi.quantity)) OVER (ORDER BY YEAR(o.order_date))) * 100, 2) AS yoy_growth_percent
+FROM 
+    orders o
+JOIN 
+    order_items oi ON o.order_id = oi.order_id
+GROUP BY 
+    YEAR(o.order_date)
+ORDER BY 
+    year;
+```
+<img width="486" alt="image" src="https://github.com/user-attachments/assets/cfd844c9-b54f-4d54-b288-fc46d0b2344a">
+
+**Analysis:**
+- Revenue grew by 42.01% in 2017 compared to 2016, indicating strong business performance and possibly successful marketing or product strategies.
+- Revenue dropped significantly by -47.36% in 2018, suggesting potential challenges such as reduced customer retention, market saturation...
+
+**Recommendations:**
+- Identify the drivers behind the 2017 growth and replicate these strategies.
+- Conduct root cause analysis for the 2018 revenue drop and address the underlying issues.
+
+**2.2. Identify Montly sales trend**
+```
+SELECT 
+    MONTH(o.order_date) AS month,
+    Round(SUM(oi.list_price * (1 - oi.discount) * oi.quantity),2) AS revenue
+FROM 
+    orders o
+JOIN 
+    order_items oi ON o.order_id = oi.order_id
+GROUP BY 
+    MONTH(o.order_date)
+ORDER BY 
+    revenue Desc;
+  ```
+<img width="146" alt="image" src="https://github.com/user-attachments/assets/7feb89e0-bf85-47ae-89a8-6875d023ac6e">
+  
+**Analysis:**
+- The first quarter (January to March) shows moderate sales, with January contributing $882,193.01. April has the highest revenue ($1,212,356.83), indicating a strong sales period.
+- November ($465,852.93) and December ($440,890.11) have the lowest revenues.
+
+**Recommendations:**
+
+- Introduce special offers, holiday promotions, or marketing campaigns to improve performance in November and December.
+- Allocate resources and marketing efforts strategically, focusing on high-performing months like April while addressing gaps in weaker months. 
+
+**2.3. List Revenue by Store**
+```
+SELECT 
+    s.store_name, 
+    SUM(oi.list_price * (1 - oi.discount) * oi.quantity) AS revenue,
+    ROUND((SUM(oi.list_price * (1 - oi.discount) * oi.quantity) / SUM(SUM(oi.list_price * (1 - oi.discount) * oi.quantity)) OVER ()) * 100, 2) AS revenue_percentage
+FROM 
+    orders o
+JOIN 
+    order_items oi ON o.order_id = oi.order_id
+JOIN 
+    stores s ON o.store_id = s.store_id 
+GROUP BY 
+    s.store_name
+ORDER BY 
+    revenue DESC;
+```
+<img width="260" alt="image" src="https://github.com/user-attachments/assets/5ac3bd14-22e3-4387-a6b1-8588ba6a4b34">
+
+**Analysis:**
+
+- Baldwin Bikes leads, contributing 67.83% of revenue ($5.2M), far outperforming the other stores.
+- Santa Cruz Bikes (20.88%) and Rowlett Bikes (11.28%) lag behind, indicating growth opportunities.
+
+**Recommendations:**
+- Increase marketing efforts and promotional campaigns for Santa Cruz and Rowlett to attract more customers and boost revenue. 
