@@ -272,4 +272,50 @@ ORDER BY
 - Santa Cruz Bikes (20.88%) and Rowlett Bikes (11.28%) lag behind, indicating growth opportunities.
 
 **Recommendations:**
-- Increase marketing efforts and promotional campaigns for Santa Cruz and Rowlett to attract more customers and boost revenue. 
+- Increase marketing efforts and promotional campaigns for Santa Cruz and Rowlett to attract more customers and boost revenue.
+
+**2.4. List Revenue by State**
+```
+SELECT 
+    s.state, 
+    ROUND(SUM(oi.list_price * (1 - oi.discount) * oi.quantity), 2) AS total_revenue,
+    ROUND(SUM(CASE 
+        WHEN customer_order_count.total_orders = 1 
+        THEN oi.list_price * (1 - oi.discount) * oi.quantity 
+        ELSE 0 
+    END), 2) AS onetime_buyer_revenue,
+    ROUND(SUM(CASE 
+        WHEN customer_order_count.total_orders > 1 
+        THEN oi.list_price * (1 - oi.discount) * oi.quantity 
+        ELSE 0 
+    END), 2) AS repeat_buyer_revenue
+FROM 
+    orders o
+JOIN 
+    order_items oi ON o.order_id = oi.order_id
+JOIN 
+    stores s ON o.store_id = s.store_id  
+JOIN 
+    (
+        SELECT 
+            customer_id, 
+            COUNT(order_id) AS total_orders
+        FROM 
+            orders
+        GROUP BY 
+            customer_id
+    ) customer_order_count 
+ON 
+    o.customer_id = customer_order_count.customer_id
+GROUP BY 
+    s.state
+ORDER BY 
+    total_revenue DESC;
+```
+**Analysis:**
+- New York generates the highest total revenue ($5.2M), with most of it coming from one-time buyers ($4.38M, 84%).
+- California has a higher repeat buyer contribution ($587K) compared to Texas, but one-time buyers still dominate ($1.01M, 63%).
+- Texas has the lowest total revenue ($867K) and repeat buyer revenue ($271K), showing room for growth.
+
+**Recommendations:**
+ - Focus on converting New York and Calefornia's one-time buyers into repeat buyers through loyalty programs and targeted marketing.
