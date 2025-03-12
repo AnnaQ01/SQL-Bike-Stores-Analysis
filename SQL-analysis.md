@@ -1,4 +1,4 @@
-# Bike-Stores-Analysis
+# Bike Stores Analysing with SQL
 
 The SQL Bike Store Analysis project provides in-depth insights into sales performance, customer behavior, and product trends across bike stores from 2016 to 2018. Utilizing advanced SQL techniques and Power BI, the analysis examines customer segmentation, state-wise and store-wise revenue trends, top-performing staff, and product performance. Power BI is used to create interactive dashboards and visualizations, allowing for a deeper understanding of customer buying patterns, such as one-time and repeat buyers, while also tracking year-over-year (YoY) and monthly sales growth. Additionally, the project evaluates revenue contributions by brands, product categories, and top-selling products, along with identifying the most successful staff and stores based on sales performance. 
 
